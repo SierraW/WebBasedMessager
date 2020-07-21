@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<HTML ng-app="myApp">
+
+<head>
+	<title>FineStudio Support</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+	<link href="css/mtreview.css" rel="stylesheet">
+	<script src="js/jquery.js"></script>
+	<script src="js/angular.js"></script>
+	<script src="js/account.js"></script>
+
+</head>
+
+<body ng-controller="mainController">
+	<form class="form-container" onsubmit="login()">
+		<p id="lblMsg"></p>
+		<p>
+			Username / Email: <input type="text" id="userId" size="32" required/>
+		</p>
+		<p>
+			Password: <input type="text" id="pass" size="32" required/>
+		</p>
+		<button type="submit" id="btnSignIn" >Sign in</button>
+	</form>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    <title>FS Support</title>
+
+    <link href="../css/supportHome.css" rel="stylesheet">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/angular.js"></script>
+    <script src="../js/supportHome.js"></script>
+</head>
+<body ng-controller="mainController">
+    <div id="availableGroupChat">
+        <table>
+            <thead>
+            <tr>
+                <th ng-click="sortChat('name')">Name</th>
+                <th ng-click="sortChat('signature')">Signature</th>
+                <th ng-click="sortChat('last_act_time')">Act time</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="groupChat in groupChats | orderBy: gcColumnName">
+                <td>{{groupChat.name}}</td>
+                <td>{{groupChat.signature}}</td>
+                <td>{{groupChat.last_act_time}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="chat">
+        <table id="tblChat">
+            <thead>
+            <tr>
+                <th><div>聊天</div></th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="chatMsg in chatMessages | orderBy: 'time'">
+                    <td class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <form onsubmit="sendMessage()">
+            <label for="txtInput">Msg</label><input id="txtInput" type="text"/>
+            <button type="submit">Send!</button>
+        </form>
+        <button id="btnBottom" type="button" onclick="scrollToBottom()">To Bottom</button>
+    </div>
+</body>
+</html>

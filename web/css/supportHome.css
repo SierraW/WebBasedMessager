@@ -1,0 +1,13 @@
+/* scrolltable rules */
+#tblChat  { margin-top:  20px; display: inline-block; overflow: auto; height: 300px; }
+#tblChat th div { margin-top: -20px; position: absolute; }
+
+/* design */
+#tblChat { border-collapse: collapse; }
+#tblChat tr { padding-bottom: 50px; }
+#tblChat tr:nth-child(even) { background: #EEE; }
+
+
+.alignLeft {
+    text-align: left;
+}
