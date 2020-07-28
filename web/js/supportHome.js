@@ -50,6 +50,21 @@ setInterval(function refreshChat() {
     setTimeout(scrollToBottom, 10);
 }, 1000);
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 function checkUser(session) {
     http({
         method : "GET",
@@ -68,7 +83,7 @@ function checkUser(session) {
 function getChatRoom() {
     http({
         method : "GET",
-        url : `../../socket/getAllRoom.php?user_id=${userId}&time=${Date.now()}`
+        url : `http://47.253.3.214/socket/getAllRoom.php?user_id=${userId}&time=${Date.now()}`
     }).then(function mySuccess(response) {
         for (let i = 0 ; i < response.data.data.length; i++) {
             if (i === 0 && chatId == null) {
@@ -88,7 +103,7 @@ function getChatRoom() {
 function getBroadcastUser() {
     http({
         method : "GET",
-        url : `../../socket/getBroadcastUser.php`
+        url : `http://47.253.3.214/socket/getBroadcastUser.php?time=${Date.now()}`
     }).then(function getBUser(response) {
         scope.broadcastUsers = response.data.data;
     }, function error(rsaHashedImportParams) {
@@ -107,25 +122,10 @@ function getNormalUser() {
     });
 }
 
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
 function setNameInto($http, chatListResp) {
     $http({
         method : "GET",
-        url : `../../socket/getMember.php?chat_id=${chatListResp.chat_id}&time=${Date.now()}`
+        url : `http://47.253.3.214/socket/getMember.php?chat_id=${chatListResp.chat_id}&time=${Date.now()}`
     }).then(function mySuccess(response) {
         chatListResp.name = "";
         let first = true;
@@ -143,7 +143,7 @@ function setNameInto($http, chatListResp) {
 }
 
 function setChat() {
-    let url = `../../socket/getAllMsg.php?chat_id=${chatId}&user_id=${userId}&time=${Date.now()}`;
+    let url = `http://47.253.3.214/socket/getAllMsg.php?chat_id=${chatId}&user_id=${userId}&time=${Date.now()}`;
     http({
         method : "GET",
         url : url
@@ -162,7 +162,7 @@ function getNewMsg() {
         return;
     }
 
-    let url = `../../socket/getNewMsg.php?chat_id=${chatId}&user_id=${userId}&last_read=${data.readId}&time=${Date.now()}`;
+    let url = `http://47.253.3.214/socket/getNewMsg.php?chat_id=${chatId}&user_id=${userId}&last_read=${data.readId}&time=${Date.now()}`;
     http({
         method : "GET",
         url : url
@@ -204,11 +204,11 @@ function sendMessage() {
     console.log($("#txtInput").html());
     http({
         method : "GET",
-        url : `../../socket/sendMsg.php?user_id=${userId}&chat_id=${chatId}&msg=${encodeURI($("#txtInput").val())}&msg_type=1`
+        url : `http://47.253.3.214/socket/sendMsg.php?user_id=${userId}&chat_id=${chatId}&msg=${encodeURI($("#yourMes").val())}&msg_type=1&time=${Date.now()}`
     }).then(function success(response) {
         if (response.data.success === "success") {
             getNewMsg();
-            $("#txtInput").val("");
+            $("#yourMes").val("");
         }
 
     }, function error(rsaHashedImportParams) {
@@ -231,7 +231,7 @@ function createRoom() {
         }
         http({
             method : "GET",
-            url : `../../socket/createChat.php?leader_id=${leader_id}&attender_id=${selectedElement.shift()}`
+            url : `../../socket/createChat.php?leader_id=${leader_id}&attender_id=${selectedElement.shift()}&time=${Date.now()}`
         }).then(function success(response) {
             if (response.data.success === "success") {
                 alert("creat room successful");
@@ -249,7 +249,7 @@ function createRoom() {
         while (selectedElement.length !== 0) {
             http({
                 method : "GET",
-                url : `../../socket/addMember.php?user_id=${selectedElement.shift()}&chat_id=${newChatId}`
+                url : `../../socket/addMember.php?user_id=${selectedElement.shift()}&chat_id=${newChatId}&time=${Date.now()}`
             }).then(function success(response) {
 
             }, function error(rsaHashedImportParams) {

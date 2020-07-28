@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
     <meta http-equiv="expires" content="0">
     <meta http-equiv="pragma" content="no-cache">
@@ -12,61 +12,106 @@
     <script src="../js/jquery.js"></script>
     <script src="../js/angular.js"></script>
     <script src="../js/supportHome.js"></script>
+
+    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 <body ng-controller="mainController">
-<div class="gridArea">
-    <header><h3>Fine Studio</h3></header>
-    <div id="availableGroupChat">
-        <table>
-            <thead>
-            <tr>
-                <th ng-click="sortChat('name')">目前项目</th>
-                <th ng-click="sortChat('last_act_time')">消息时间</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="groupChat in groupChats | orderBy: gcColumnName" ng-click="setCurrentChat(groupChat.chat_id)">
-                <td>{{groupChat.name}}</td>
-                <td>{{groupChat.last_act_time}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div id="chat">
-        <div id="chatTitle">消息列表</div>
-        <div class="scroll scroll-pull">
-            <div id="chatMsg" ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">
-                <p class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</p>
+<div class="container content">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-action " id="roomTitle">
+                        Your Chat Rooms
+                    </div>
+                    <div class="card-header list-group-item list-group-item-action"
+                         ng-repeat="groupChat in groupChats | orderBy: gcColumnName"
+                         ng-click="setCurrentChat(groupChat.chat_id)">
+                        {{groupChat.name}}
+                        {{groupChat.last_act_time}}
+                    </div>
+
+                </div>
+
+
+                <div class="card-body height3">
+
+
+                    <ul class="chat-list">
+
+                        <li class="{{chatMsg.isRead}}" id="chatMsg"
+                            ng-repeat="chatMsg in chatMessages | orderBy: 'time'">
+
+                            <div class="chat-img">
+                                <img alt="Avtar" src="https://bootdey.com/img/Content/avatar/avatar1.png">
+                                <div class="chat-name">
+                                    <!-- <p>(#{{chatMsg.user_id}})</p> -->
+                                    <p>{{chatMsg.display_name}}</p>
+                                </div>
+                            </div>
+
+                            <div class="chat-body user{{chatMsg.user_id}}">
+                                <div class="chat-message">
+                                    <p>{{chatMsg.time}}</p>
+                                    <h5>{{chatMsg.message}}</h5>
+
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="bottom_wrapper clearfix">
+                        <div class="message_input_wrapper">
+                            <textarea id="yourMes" class="message_input"
+                                      placeholder="Type your message here..."></textarea>
+                        </div>
+
+                        <div class="send_message" onclick="sendMessage()">
+                            <div class="icon"></div>
+                            <div class="text">Send</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <form onsubmit="sendMessage()">
-            <textarea style="width: 100%; height: 5em;" id="txtInput" required autofocus></textarea>
-            <button type="submit">Send!</button>
-        </form>
-        <button id="btnBottom" type="button" onclick="scrollToBottom()">To Bottom</button>
     </div>
     <div ng-if="admin" id="broadcastUser">
         <table>
             <thead>
             <tr>
-                <th><div>客服</div></th>
+                <th>
+                    <div>客服</div>
+                </th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="buser in broadcastUsers">
-                <td ng-click="highlight(buser.id)" id="{{buser.id}}">{{buser.id}} {{buser.display_name}} {{buser.title_name}}</td>
+                <td ng-click="highlight(buser.id)" id="{{buser.id}}">{{buser.id}} {{buser.display_name}}
+                    {{buser.title_name}}
+                </td>
             </tr>
             </tbody>
         </table>
         <table>
             <thead>
             <tr>
-                <th><div>客户</div></th>
+                <th>
+                    <div>客户</div>
+                </th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="user in normalUsers">
-                <td ng-click="highlight(user.id)" id="{{user.id}}">{{user.id}} {{user.display_name}} {{user.title_name}}</td>
+                <td ng-click="highlight(user.id)" id="{{user.id}}">{{user.id}} {{user.display_name}}
+                    {{user.title_name}}
+                </td>
             </tr>
             </tbody>
         </table>
@@ -80,5 +125,6 @@
         <button type="button" onclick="createRoom()">Creat Room</button>
     </div>
 </div>
+
 </body>
 </html>
