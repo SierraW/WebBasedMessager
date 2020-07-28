@@ -1,6 +1,10 @@
 $(document).ready(function() {
-    console.log("in doc ready");
-
+    $("#txtInput").keypress(function (e) {
+        if(e.which == 13 && !e.shiftKey) {
+            $(this).closest("form").submit();
+            e.preventDefault();
+        }
+    });
 });
 
 var http;
@@ -159,6 +163,7 @@ function load(chatId) {
 }
 
 function sendMessage() {
+    console.log($("#txtInput").html());
     http({
         method : "GET",
         url : `../../socket/sendMsg.php?user_id=${userId}&chat_id=${chatId}&msg=${encodeURI($("#txtInput").val())}&msg_type=1`

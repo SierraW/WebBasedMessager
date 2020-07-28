@@ -33,24 +33,12 @@
         </table>
     </div>
     <div id="chat">
-<!--        <table id="tblChat">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th><div>聊天</div></th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--                <tr ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">-->
-<!--                    <td class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</td>-->
-<!--                </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
         <div id="chatTitle">消息列表</div>
         <div id="chatMsg" ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">
             <p class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</p>
         </div>
         <form onsubmit="sendMessage()">
-            <label for="txtInput">Msg</label><input id="txtInput" type="text"/>
+            <textarea style="width: 100%; height: 5em;" id="txtInput" required autofocus></textarea>
             <button type="submit">Send!</button>
         </form>
         <button id="btnBottom" type="button" onclick="scrollToBottom()">To Bottom</button>
