@@ -14,4 +14,4 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With");
 
 
-echo json_encode($daoChat->getNewMsg($_GET['chat_id'], $_GET['time']));
+echo json_encode($daoChat->getNewMsg($_GET['chat_id'], $_GET['user_id'], $_GET['last_read']));

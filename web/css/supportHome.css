@@ -1,13 +1,46 @@
-/* scrolltable rules */
-#tblChat  { margin-top:  20px; display: inline-block; overflow: auto; height: 300px; }
-#tblChat th div { margin-top: -20px; position: absolute; }
-
-/* design */
-#tblChat { border-collapse: collapse; }
-#tblChat tr { padding-bottom: 50px; }
-#tblChat tr:nth-child(even) { background: #EEE; }
-
-
-.alignLeft {
+.align-items-start {
     text-align: left;
+}
+
+.align-items-end {
+    text-align: right;
+}
+
+.gridArea {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas:
+	"header header"
+	"chatList chat"
+;
+    padding: 2px;
+    border-collapse: collapse;
+    gap: 1px;
+    background-color: darkgrey;
+}
+
+#chatMsg {
+
+}
+
+#chatMsg p {
+
+}
+
+header {
+    grid-area: header;
+    background-color: gainsboro;
+    padding: 20px;
+}
+
+#availableGroupChat {
+    grid-area: chatList;
+    background-color: gainsboro;
+    padding: 20px;
+}
+
+#chat {
+    grid-area: chat;
+    background-color: gainsboro;
+    padding: 20px;
 }

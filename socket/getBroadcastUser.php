@@ -2,10 +2,9 @@
 /**
  * Created by PhpStorm.
  * User: sierramws
- * Date: 2020-07-16
- * Time: 18:03
+ * Date: 2020-07-23
+ * Time: 15:45
  */
-
 include_once ('../dao/daoChat.php');
 
 //environment
@@ -15,4 +14,5 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With");
 
 
-echo json_encode($daoChat->getAllMsg($_GET['chat_id'], $_GET['user_id']));
+
+echo json_encode($daoChat->getBroadcastUser());

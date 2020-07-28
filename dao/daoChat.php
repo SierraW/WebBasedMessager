@@ -14,6 +14,7 @@ class DaoChat extends DaoWebL {
     private $room_table = 'em_room';
     private $attender_table = 'em_attender';
     private $msg_table = 'em_msg';
+    private $title_table = 'em_title';
 
     function checkUser($user_id, $session) {
         return $this->select($this->user_table, ["user_login", "user_email", "display_name", "title_id", "role_id"], "id = '{$user_id}' AND user_session = '{$session}'");
@@ -191,7 +192,7 @@ class DaoChat extends DaoWebL {
         $this->insertData($sql);
     }
 
-    function getAllMsg($chat_id) {
+    function getAllMsg($chat_id, $user_id) {
         $data_map = [
             'selected' => ['a.*', 'b.display_name'],
             'lblOrTb' => 'a',
@@ -206,10 +207,19 @@ class DaoChat extends DaoWebL {
             'condi' => "a.chat_id = '{$chat_id}'",
             'orBy' => 'b.time DESC'
         ];
-        return $this->joinSelect($data_map);
+        $result = $this->joinSelect($data_map);
+        for ($count = 0; $count < sizeof($result['data']); $count++) {
+            if ($result['data'][$count]['user_id'] === $user_id) {
+                $result['data'][$count]['isRead'] = "align-items-end";
+            } else {
+                $result['data'][$count]['isRead'] = "align-items-start";
+            }
+        }
+
+        return $result;
     }
 
-    function getNewMsg($chat_id, $time) {
+    function getNewMsg($chat_id, $user_id, $last_read) {
         $data_map = [
             'selected' => ['a.*', 'b.display_name'],
             'lblOrTb' => 'a',
@@ -221,16 +231,18 @@ class DaoChat extends DaoWebL {
                     'on' => ['a.user_id', 'b.id']
                 ]
             ],
-            'condi' => "a.chat_id = '{$chat_id}' AND time >= '{$time}'",
-            'orBy' => 'b.time DESC'
+            'condi' => "a.chat_id = '{$chat_id}' AND a.msg_id > '{$last_read}'",
+            'orBy' => 'a.time'
         ];
-        $sql = "SELECT a.*, b.display_name FROM {$this->msg_table} a LEFT JOIN {$this->user_table} b ON a.user_id = b.id WHERE a.chat_id = '{$chat_id}' AND time >= {$time}";
-        $result = getdate($sql);
-        if ($this->isSuccess($result)) {
-            foreach ($result['data'] as $item) {
-                $this->markMsgRead($item['msg_id']);
+        $result = $this->joinSelect($data_map);
+        for ($count = 0; $count < sizeof($result['data']); $count++) {
+            if ($result['data'][$count]['user_id'] === $user_id) {
+                $result['data'][$count]['isRead'] = "align-items-end";
+            } else {
+                $result['data'][$count]['isRead'] = "align-items-start";
             }
         }
+
         return $result;
     }
 
@@ -243,6 +255,24 @@ class DaoChat extends DaoWebL {
 
     function removeMsg($msg_id) {
         $this->delete($this->msg_table, "msg_id = '{$msg_id}'");
+    }
+
+    function getBroadcastUser() {
+        $data_map = [
+            'selected' => ['a.id', 'a.display_name', 'b.title_name'],
+            'lblOrTb' => 'a',
+            'orTb' => $this->user_table,
+            'conTb' => [
+                'b' => [
+                    'joSt' => 'LEFT JOIN',
+                    'nTb' => $this->title_table,
+                    'on' => ['a.title_id', 'b.title_id']
+                ]
+            ],
+            'condi' => "display_homepage = 1",
+            'orBy' => 'a.id'
+        ];
+        return $this->joinSelect($data_map);
     }
 }
 

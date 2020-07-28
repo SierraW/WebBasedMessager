@@ -14,42 +14,61 @@
     <script src="../js/supportHome.js"></script>
 </head>
 <body ng-controller="mainController">
+<div class="gridArea">
+    <header><h3>Fine Studio</h3></header>
     <div id="availableGroupChat">
         <table>
             <thead>
             <tr>
-                <th ng-click="sortChat('name')">Name</th>
-                <th ng-click="sortChat('signature')">Signature</th>
-                <th ng-click="sortChat('last_act_time')">Act time</th>
+                <th ng-click="sortChat('name')">目前项目</th>
+                <th ng-click="sortChat('last_act_time')">消息时间</th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="groupChat in groupChats | orderBy: gcColumnName">
+            <tr ng-repeat="groupChat in groupChats | orderBy: gcColumnName" ng-click="setCurrentChat(groupChat.chat_id)">
                 <td>{{groupChat.name}}</td>
-                <td>{{groupChat.signature}}</td>
                 <td>{{groupChat.last_act_time}}</td>
             </tr>
             </tbody>
         </table>
     </div>
     <div id="chat">
-        <table id="tblChat">
-            <thead>
-            <tr>
-                <th><div>聊天</div></th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="chatMsg in chatMessages | orderBy: 'time'">
-                    <td class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</td>
-                </tr>
-            </tbody>
-        </table>
+<!--        <table id="tblChat">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th><div>聊天</div></th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--                <tr ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">-->
+<!--                    <td class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</td>-->
+<!--                </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+        <div id="chatTitle">消息列表</div>
+        <div id="chatMsg" ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">
+            <p class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</p>
+        </div>
         <form onsubmit="sendMessage()">
             <label for="txtInput">Msg</label><input id="txtInput" type="text"/>
             <button type="submit">Send!</button>
         </form>
         <button id="btnBottom" type="button" onclick="scrollToBottom()">To Bottom</button>
     </div>
+<!--    <div id="broadcastUser">-->
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th><div>可视用户 / 头衔</div></th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr ng-repeat="user in broadcastUsers">-->
+<!--                <td ng-click="createChat(user.id)">{{user.display_name}} {{user.title_name}}</td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+</div>
 </body>
 </html>
