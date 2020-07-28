@@ -34,8 +34,10 @@
     </div>
     <div id="chat">
         <div id="chatTitle">消息列表</div>
-        <div id="chatMsg" ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">
-            <p class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</p>
+        <div class="scroll scroll-pull">
+            <div id="chatMsg" ng-repeat="chatMsg in chatMessages | orderBy: 'time'" class="{{chatMsg.isRead}}">
+                <p class="user{{chatMsg.user_id}}">From:{{chatMsg.display_name}}(#{{chatMsg.user_id}})<br/>{{chatMsg.message}}<br/>{{chatMsg.time}}</p>
+            </div>
         </div>
         <form onsubmit="sendMessage()">
             <textarea style="width: 100%; height: 5em;" id="txtInput" required autofocus></textarea>
@@ -43,20 +45,40 @@
         </form>
         <button id="btnBottom" type="button" onclick="scrollToBottom()">To Bottom</button>
     </div>
-<!--    <div id="broadcastUser">-->
-<!--        <table>-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th><div>可视用户 / 头衔</div></th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr ng-repeat="user in broadcastUsers">-->
-<!--                <td ng-click="createChat(user.id)">{{user.display_name}} {{user.title_name}}</td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </div>-->
+    <div ng-if="admin" id="broadcastUser">
+        <table>
+            <thead>
+            <tr>
+                <th><div>客服</div></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="buser in broadcastUsers">
+                <td ng-click="highlight(buser.id)" id="{{buser.id}}">{{buser.id}} {{buser.display_name}} {{buser.title_name}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead>
+            <tr>
+                <th><div>客户</div></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="user in normalUsers">
+                <td ng-click="highlight(user.id)" id="{{user.id}}">{{user.id}} {{user.display_name}} {{user.title_name}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="button" onclick="clearHighLight()">Clear</button>
+    </div>
+    <div ng-if="admin" id="selectedUsers">
+        <label>
+            <p>Group leader id(optional):</p>
+            <input id="leaderId" type="number" placeholder="Group Leader Id"/>
+        </label>
+        <button type="button" onclick="createRoom()">Creat Room</button>
+    </div>
 </div>
 </body>
 </html>

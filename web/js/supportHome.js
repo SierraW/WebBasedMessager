@@ -12,12 +12,15 @@ var scope;
 var userId;
 var chatId;
 var count = 0;
+var selectedElement = [];
+var isAdmin;
 
 var app=angular.module("myApp", [])
     .controller("mainController", function($scope, $http) {
         http = $http;
         scope = $scope;
         userId = getCookie("user_id");
+        checkUser(getCookie("user_session"));
         getChatRoom();
         $scope.sortChat = function (columnName) {
             $scope.gcColumnName = columnName;
@@ -26,11 +29,20 @@ var app=angular.module("myApp", [])
             chatId = chat_id;
             setChat();
         };
-        $scope.createChat = function (user_id) {
-            createRoom(user_id);
-            setChat();
+        $scope.highlight = function (id) {
+            if (selectedElement.includes(id)) {
+                let index = selectedElement.indexOf(id);
+                if (index > -1) {
+                    selectedElement.splice(index , 1);
+                }
+                $(`#${id}`).removeClass("selected");
+            } else {
+                selectedElement.push(id);
+                $(`#${id}`).addClass("selected");
+            }
         }
         getBroadcastUser();
+        getNormalUser();
     });
 
 setInterval(function refreshChat() {
@@ -38,10 +50,25 @@ setInterval(function refreshChat() {
     setTimeout(scrollToBottom, 10);
 }, 1000);
 
+function checkUser(session) {
+    http({
+        method : "GET",
+        url : `../../socket/checkUser.php?user_id=${userId}&session=${session}&time=${Date.now()}`
+    }).then(function mySuccess(response) {
+        if (response.data != null && response.data.data.length === 1) {
+            isAdmin = response.data.data[0].display_homepage == 0;
+            scope.admin = isAdmin;
+            console.log(scope.admin);
+        }
+    }, function myError(response) {
+        console.log(response.statusText);
+    });
+}
+
 function getChatRoom() {
     http({
         method : "GET",
-        url : `../../socket/getAllRoom.php?user_id=${userId}`
+        url : `../../socket/getAllRoom.php?user_id=${userId}&time=${Date.now()}`
     }).then(function mySuccess(response) {
         for (let i = 0 ; i < response.data.data.length; i++) {
             if (i === 0 && chatId == null) {
@@ -69,6 +96,17 @@ function getBroadcastUser() {
     });
 }
 
+function getNormalUser() {
+    http({
+        method : "GET",
+        url : `../../socket/getNormalUser.php?time=${Date.now()}`
+    }).then(function getBUser(response) {
+        scope.normalUsers = response.data.data;
+    }, function error(rsaHashedImportParams) {
+        console.log(rsaHashedImportParams.statusText);
+    });
+}
+
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -87,7 +125,7 @@ function getCookie(cname) {
 function setNameInto($http, chatListResp) {
     $http({
         method : "GET",
-        url : `../../socket/getMember.php?chat_id=${chatListResp.chat_id}`
+        url : `../../socket/getMember.php?chat_id=${chatListResp.chat_id}&time=${Date.now()}`
     }).then(function mySuccess(response) {
         chatListResp.name = "";
         let first = true;
@@ -178,21 +216,54 @@ function sendMessage() {
     });
 }
 
-function createRoom(attender_id) {
-    http({
-        method : "GET",
-        url : `../../socket/createChat.php?leader_id=${userId}&attender_id=${attender_id}`
-    }).then(function success(response) {
-        if (response.data.success === "success") {
-            chatId = response.data.data[0].chat_id;
-            getChatRoom();
-            setChat();
-            $("#txtInput").val("");
+function createRoom() {
+    var newChatId;
+    if (selectedElement.length < 2) {
+        alert("Not enough users!");
+        return;
+    }
+    if (selectedElement.length === 2) {
+        let leader_id = $("#leaderId").val();
+        if (leader_id == null || !selectedElement.includes(leader_id)) {
+            leader_id = selectedElement.shift();
+        } else {
+            leader_id = selectedElement.slice(selectedElement.indexOf(leader_id), 1);
         }
+        http({
+            method : "GET",
+            url : `../../socket/createChat.php?leader_id=${leader_id}&attender_id=${selectedElement.shift()}`
+        }).then(function success(response) {
+            if (response.data.success === "success") {
+                alert("creat room successful");
+                getChatRoom();
+                newChatId = response.data.data[0].chat_id;
+                chatId = response.data.data[0].chat_id;
+                setChat();
+                $("#txtInput").val("");
+            }
 
-    }, function error(rsaHashedImportParams) {
-        console.log(rsaHashedImportParams.statusText);
-    });
+        }, function error(rsaHashedImportParams) {
+            console.log(rsaHashedImportParams.statusText);
+        });
+    } else if (selectedElement.length > 2) {
+        while (selectedElement.length !== 0) {
+            http({
+                method : "GET",
+                url : `../../socket/addMember.php?user_id=${selectedElement.shift()}&chat_id=${newChatId}`
+            }).then(function success(response) {
+
+            }, function error(rsaHashedImportParams) {
+                console.log(rsaHashedImportParams.statusText);
+            });
+        }
+    }
+}
+
+function clearHighLight() {
+    for (let id of selectedElement) {
+        $(`#${id}`).removeClass("selected");
+    }
+    selectedElement = [];
 }
 
 function scrollToBottom() {

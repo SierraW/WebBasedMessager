@@ -17,7 +17,7 @@ class DaoChat extends DaoWebL {
     private $title_table = 'em_title';
 
     function checkUser($user_id, $session) {
-        return $this->select($this->user_table, ["user_login", "user_email", "display_name", "title_id", "role_id"], "id = '{$user_id}' AND user_session = '{$session}'");
+        return $this->select($this->user_table, ["user_login", "user_email", "display_name", "title_id", "role_id", "display_homepage"], "id = '{$user_id}' AND user_session = '{$session}'");
     }
 
     function getAllDisplayedUser() {
@@ -270,6 +270,24 @@ class DaoChat extends DaoWebL {
                 ]
             ],
             'condi' => "display_homepage = 1",
+            'orBy' => 'a.id'
+        ];
+        return $this->joinSelect($data_map);
+    }
+
+    function getNormalUser() {
+        $data_map = [
+            'selected' => ['a.id', 'a.display_name', 'b.title_name'],
+            'lblOrTb' => 'a',
+            'orTb' => $this->user_table,
+            'conTb' => [
+                'b' => [
+                    'joSt' => 'LEFT JOIN',
+                    'nTb' => $this->title_table,
+                    'on' => ['a.title_id', 'b.title_id']
+                ]
+            ],
+            'condi' => "display_homepage = 0",
             'orBy' => 'a.id'
         ];
         return $this->joinSelect($data_map);

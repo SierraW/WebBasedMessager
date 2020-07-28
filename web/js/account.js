@@ -34,8 +34,8 @@ function accountSetUp(data) {
     if (data.success !== "success") {
         $("#lblMsg").html(`Log in ${data.message}`);
     } else {
-        setCookie("user_id" , data.data.id);
-        setCookie("user_session", data.data.user_session);
+        setCookie("user_id" , data.data.id, 30);
+        setCookie("user_session", data.data.user_session, 30);
 
         window.location.replace("pages/home.html");
     }
