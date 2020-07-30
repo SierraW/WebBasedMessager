@@ -118,11 +118,18 @@
         <button type="button" onclick="clearHighLight()">Clear</button>
     </div>
     <div ng-if="admin" id="selectedUsers">
-        <label>
-            <p>Group leader id(optional):</p>
-            <input id="leaderId" type="number" placeholder="Group Leader Id"/>
-        </label>
-        <button type="button" onclick="createRoom()">Creat Room</button>
+        <form onsubmit="createRoom()">
+            <label>
+                <p>Group leader id(optional):</p>
+                <input id="leaderId" type="number" placeholder="Group Leader Id"/>
+            </label>
+            <button type="submit">Creat Room</button>
+        </form>
+    </div>
+    <div id="chatRoomUser">
+        <div ng-repeat="user in chatUsers">
+            <p>{{user.display_name}}</p>
+        </div>
     </div>
 </div>
 

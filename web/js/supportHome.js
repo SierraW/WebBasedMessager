@@ -46,9 +46,21 @@ var app=angular.module("myApp", [])
     });
 
 setInterval(function refreshChat() {
-    getNewMsg();
-    setTimeout(scrollToBottom, 10);
+    setTimeout(getNewMsg, 10);
 }, 1000);
+
+function getRoomUsers() {
+    http({
+        method : "GET",
+        url : `../../socket/getMember.php?chat_id=${chatId}&time=${Date.now()}`
+    }).then(function mySuccess(response) {
+        if (response.data != null) {
+            scope.chatUsers = response.data.data;
+        }
+    }, function myError(response) {
+        console.log(response.statusText);
+    });
+}
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -150,6 +162,7 @@ function setChat() {
     }).then(function success(response) {
         scope.chatMessages = response.data.data;
         save(chatId, response.data)
+        getRoomUsers();
     }, function error(rsaHashedImportParams) {
         console.log(rsaHashedImportParams.statusText);
     });
@@ -168,17 +181,22 @@ function getNewMsg() {
         url : url
     }).then(function success(response) {
         if (response.data.success === "success") {
-            if (response.data.data.length === 0) {
+            if (response.data.data.length == 0) {
                 //do nothing
             } else {
                 data.data = data.data.concat(response.data.data);
                 scope.chatMessages = data.data;
                 save(chatId, data);
+                scrollToBottom();
             }
         }
     }, function error(rsaHashedImportParams) {
         console.log(rsaHashedImportParams.statusText);
     });
+}
+
+function scrollToBottom() {
+    window.scrollTo(0,document.body.scrollHeight);
 }
 
 function save(chatId, data) {
@@ -220,21 +238,21 @@ function createRoom() {
     var newChatId;
     if (selectedElement.length < 2) {
         alert("Not enough users!");
+        location.reload();
         return;
-    }
-    if (selectedElement.length === 2) {
+    } else {
         let leader_id = $("#leaderId").val();
         if (leader_id == null || !selectedElement.includes(leader_id)) {
             leader_id = selectedElement.shift();
         } else {
             leader_id = selectedElement.slice(selectedElement.indexOf(leader_id), 1);
         }
+        console.log(leader_id);
         http({
             method : "GET",
             url : `../../socket/createChat.php?leader_id=${leader_id}&attender_id=${selectedElement.shift()}&time=${Date.now()}`
         }).then(function success(response) {
             if (response.data.success === "success") {
-                alert("creat room successful");
                 getChatRoom();
                 newChatId = response.data.data[0].chat_id;
                 chatId = response.data.data[0].chat_id;
@@ -245,7 +263,8 @@ function createRoom() {
         }, function error(rsaHashedImportParams) {
             console.log(rsaHashedImportParams.statusText);
         });
-    } else if (selectedElement.length > 2) {
+    }
+    if (selectedElement.length > 2) {
         while (selectedElement.length !== 0) {
             http({
                 method : "GET",
@@ -257,6 +276,8 @@ function createRoom() {
             });
         }
     }
+    alert("creat room successful");
+    location.reload();
 }
 
 function clearHighLight() {
@@ -266,8 +287,8 @@ function clearHighLight() {
     selectedElement = [];
 }
 
-function scrollToBottom() {
-    $("#tblChat").animate({ scrollTop: $("#tblChat").prop("scrollHeight")}, 0);
-    // let scrollableObj = document.getElementById("lblChat");
-    // scrollableObj.scrollTop = scrollableObj.scrollHeight;
-}
+// function scrollToBottom() {
+//     $("#tblChat").animate({ scrollTop: $("#tblChat").prop("scrollHeight")}, 0);
+//     // let scrollableObj = document.getElementById("lblChat");
+//     // scrollableObj.scrollTop = scrollableObj.scrollHeight;
+// }
